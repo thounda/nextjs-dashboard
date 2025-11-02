@@ -5,18 +5,22 @@ import { CreateInvoice } from '@/app/ui/invoices/buttons';
 import { lusitana } from '@/app/ui/fonts';
 import { Suspense } from 'react';
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
-import { fetchInvoicesPages } from '@/app/lib/data'; // Ensure this is imported
+import { fetchInvoicesPages } from '@/app/lib/data';
+
+// Define the expected structure for searchParams explicitly
+interface SearchParams {
+    query?: string;
+    page?: string;
+}
 
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: {
-    query?: string;
-    page?: string;
-  };
+  searchParams?: SearchParams; // Use the interface for cleaner typing
 }) {
   // === TEMPORARY CODE TO TEST error.tsx ===
-  // UNCOMMENT THE LINE BELOW TO FORCE A RUNTIME ERROR
+  // NOTE: This line MUST remain commented out for a successful deployment.
+  // Uncomment it *after* deployment to manually trigger the error page.
   // throw new Error('Forced Error to Test error.tsx');
   // =========================================
 
