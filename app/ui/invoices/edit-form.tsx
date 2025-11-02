@@ -75,7 +75,7 @@ export default function EditInvoiceForm({
                 name="amount"
                 type="number"
                 step="0.01"
-                // FIX: This converts cents (e.g., 1000) back to dollars (10.00) 
+                // FIX: This converts cents (e.g., 1001) back to dollars (10.01) 
                 // and formats it as a clean two-decimal string for the browser.
                 defaultValue={(invoice.amount / 100).toFixed(2)} 
                 placeholder="Enter USD amount"

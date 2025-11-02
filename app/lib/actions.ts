@@ -70,7 +70,8 @@ export async function createInvoice(prevState: State, formData: FormData) {
     };
   }
 
-  // Clear the client-side cache and redirect the user
+  // FIX: Clear both the main dashboard and the invoices list path
+  revalidatePath('/dashboard');
   revalidatePath('/dashboard/invoices');
   redirect('/dashboard/invoices');
 }
@@ -109,7 +110,8 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
     return { message: 'Database Error: Failed to Update Invoice.' };
   }
 
-  // Clear the client-side cache and redirect the user
+  // FIX: Clear both the main dashboard and the invoices list path
+  revalidatePath('/dashboard');
   revalidatePath("/dashboard/invoices");
   redirect("/dashboard/invoices");
 }
@@ -122,6 +124,7 @@ export async function deleteInvoice(id: string) {
   try {
     await sql`DELETE FROM invoices WHERE id = ${id}`;
     // Clear the client-side cache after successful deletion
+    revalidatePath('/dashboard');
     revalidatePath("/dashboard/invoices");
   } catch (error) {
     console.error(error);
