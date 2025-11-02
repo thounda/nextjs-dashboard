@@ -75,9 +75,11 @@ export default function EditInvoiceForm({
                 name="amount"
                 type="number"
                 step="0.01"
-                // FIX: This converts cents (e.g., 1001) back to dollars (10.01) 
-                // and formats it as a clean two-decimal string for the browser.
-                defaultValue={(invoice.amount / 100).toFixed(2)} 
+                // FIX: Removing the division by 100. The observed bug (10.01 -> 0.10) 
+                // suggests the amount fetched and passed to this component (invoice.amount) 
+                // is already in dollars and cents (e.g., 10.01). We format the existing 
+                // dollar/cent value directly to ensure the display is correct.
+                defaultValue={invoice.amount.toFixed(2)} 
                 placeholder="Enter USD amount"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 aria-describedby="amount-error"
