@@ -7,8 +7,8 @@ import {
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
-import { updateInvoice, State } from '@/app/lib/actions'; // Import updateInvoice and State
-import { useFormState, useFormStatus } from 'react-dom'; // Import hooks
+import { updateInvoice, State } from '@/app/lib/actions'; 
+import { useFormState, useFormStatus } from 'react-dom'; 
 
 export default function EditInvoiceForm({
   invoice,
@@ -18,7 +18,6 @@ export default function EditInvoiceForm({
   customers: CustomerField[];
 }) {
   // 1. Bind the invoice ID to the updateInvoice server action.
-  // The resulting function signature is now: (prevState: State, formData: FormData) => Promise<State | void>
   const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
   
   // 2. Define the initial state for the form errors
@@ -76,7 +75,9 @@ export default function EditInvoiceForm({
                 name="amount"
                 type="number"
                 step="0.01"
-                defaultValue={invoice.amount / 100} // Convert cents back to dollars for display
+                // FIX APPLIED HERE: Use toFixed(2) to ensure the default value 
+                // is a clean two-decimal string, satisfying the browser's validation.
+                defaultValue={(invoice.amount / 100).toFixed(2)} 
                 placeholder="Enter USD amount"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 aria-describedby="amount-error"
