@@ -8,20 +8,38 @@ import postgres from "postgres";
 // Initialize the database connection using the environment variable
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
+// Define the State type returned by createInvoice and updateInvoice
+// This is the CRITICAL TypeScript addition that allows useFormState to work.
+export type State = {
+  errors?: {
+    customerId?: string[];
+    amount?: string[];
+    status?: string[];
+  };
+  message?: string | null;
+};
+
 // Define the primary schema for invoices
 const FormSchema = z.object({
   id: z.string(),
-  customerId: z.string(),
+  customerId: z.string({
+    invalid_type_error: 'Please select a customer.',
+  }),
   // z.coerce.number() attempts to change the value to a number.
-  amount: z.coerce.number(),
-  status: z.enum(["pending", "paid"]),
+  amount: z.coerce.number()
+    .gt(0, { message: 'Please enter an amount greater than $0.' }),
+  status: z.enum(["pending", "paid"], {
+    invalid_type_error: 'Please select an invoice status.',
+  }),
   date: z.string(),
 });
 
 // Schema tailored for creating a new invoice (omitting 'id' and 'date')
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
 
-export async function createInvoice(formData: FormData) {
+// We explicitly type the function to return Promise<State> when validation fails,
+// or nothing when it succeeds (due to redirect).
+export async function createInvoice(prevState: State, formData: FormData) {
   const validatedFields = CreateInvoice.safeParse({
     customerId: formData.get("customerId"),
     amount: formData.get("amount"),
@@ -50,7 +68,6 @@ export async function createInvoice(formData: FormData) {
     `;
   } catch (error) {
     console.error(error);
-    // For create, we are designed to return the error object to the client component.
     return {
       message: 'Database Error: Failed to Create Invoice.',
     };
@@ -64,7 +81,7 @@ export async function createInvoice(formData: FormData) {
 // Schema tailored for updating an invoice (omitting 'id' and 'date')
 const UpdateInvoice = FormSchema.omit({ id: true, date: true });
 
-export async function updateInvoice(id: string, formData: FormData) {
+export async function updateInvoice(id: string, prevState: State, formData: FormData) {
   const validatedFields = UpdateInvoice.safeParse({
     customerId: formData.get("customerId"),
     amount: formData.get("amount"),
@@ -92,7 +109,6 @@ export async function updateInvoice(id: string, formData: FormData) {
     `;
   } catch (error) {
     console.error(error);
-    // For update, we are designed to return the error object to the client component.
     return { message: 'Database Error: Failed to Update Invoice.' };
   }
 
@@ -102,14 +118,12 @@ export async function updateInvoice(id: string, formData: FormData) {
 
 /**
  * Deletes an invoice from the database.
- * * NOTE: The return type must resolve to Promise<void> for the form action to be valid.
+ * NOTE: The return type must resolve to Promise<void> for the form action to be valid.
  * Therefore, we must THROW on error instead of returning an object.
  */
 export async function deleteInvoice(id: string) {
   try {
-    // Correct logic: Delete the invoice from the database
     await sql`DELETE FROM invoices WHERE id = ${id}`;
-    // Revalidate the path to update the UI after deletion
     revalidatePath("/dashboard/invoices");
   } catch (error) {
     console.error(error);
