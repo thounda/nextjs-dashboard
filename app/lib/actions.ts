@@ -13,7 +13,6 @@ const FormSchema = z.object({
   id: z.string(),
   customerId: z.string(),
   // z.coerce.number() attempts to change the value to a number.
-  // This is where we receive the raw decimal amount from the form.
   amount: z.coerce.number(),
   status: z.enum(["pending", "paid"]),
   date: z.string(),
@@ -51,6 +50,7 @@ export async function createInvoice(formData: FormData) {
     `;
   } catch (error) {
     console.error(error);
+    // For create, we are designed to return the error object to the client component.
     return {
       message: 'Database Error: Failed to Create Invoice.',
     };
@@ -92,6 +92,7 @@ export async function updateInvoice(id: string, formData: FormData) {
     `;
   } catch (error) {
     console.error(error);
+    // For update, we are designed to return the error object to the client component.
     return { message: 'Database Error: Failed to Update Invoice.' };
   }
 
@@ -99,6 +100,11 @@ export async function updateInvoice(id: string, formData: FormData) {
   redirect("/dashboard/invoices");
 }
 
+/**
+ * Deletes an invoice from the database.
+ * * NOTE: The return type must resolve to Promise<void> for the form action to be valid.
+ * Therefore, we must THROW on error instead of returning an object.
+ */
 export async function deleteInvoice(id: string) {
   try {
     // Correct logic: Delete the invoice from the database
@@ -107,6 +113,7 @@ export async function deleteInvoice(id: string) {
     revalidatePath("/dashboard/invoices");
   } catch (error) {
     console.error(error);
-    return { message: 'Database Error: Failed to Delete Invoice.' };
+    // TYPE FIX: Throwing an error satisfies the expected action prop type (Promise<void>).
+    throw new Error('Database Error: Failed to Delete Invoice.');
   }
 }
