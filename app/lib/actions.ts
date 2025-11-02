@@ -9,7 +9,6 @@ import postgres from "postgres";
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
 // Define the State type returned by createInvoice and updateInvoice
-// This is the CRITICAL TypeScript addition that allows useFormState to work.
 export type State = {
   errors?: {
     customerId?: string[];
@@ -37,8 +36,6 @@ const FormSchema = z.object({
 // Schema tailored for creating a new invoice (omitting 'id' and 'date')
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
 
-// We explicitly type the function to return Promise<State> when validation fails,
-// or nothing when it succeeds (due to redirect).
 export async function createInvoice(prevState: State, formData: FormData) {
   const validatedFields = CreateInvoice.safeParse({
     customerId: formData.get("customerId"),
@@ -112,6 +109,7 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
     return { message: 'Database Error: Failed to Update Invoice.' };
   }
 
+  // Clear the client-side cache and redirect the user
   revalidatePath("/dashboard/invoices");
   redirect("/dashboard/invoices");
 }
@@ -119,15 +117,15 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
 /**
  * Deletes an invoice from the database.
  * NOTE: The return type must resolve to Promise<void> for the form action to be valid.
- * Therefore, we must THROW on error instead of returning an object.
  */
 export async function deleteInvoice(id: string) {
   try {
     await sql`DELETE FROM invoices WHERE id = ${id}`;
+    // Clear the client-side cache after successful deletion
     revalidatePath("/dashboard/invoices");
   } catch (error) {
     console.error(error);
-    // TYPE FIX: Throwing an error satisfies the expected action prop type (Promise<void>).
+    // Throwing an error satisfies the expected action prop type (Promise<void>).
     throw new Error('Database Error: Failed to Delete Invoice.');
   }
 }

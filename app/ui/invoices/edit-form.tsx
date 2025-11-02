@@ -75,8 +75,8 @@ export default function EditInvoiceForm({
                 name="amount"
                 type="number"
                 step="0.01"
-                // FIX APPLIED HERE: Use toFixed(2) to ensure the default value 
-                // is a clean two-decimal string, satisfying the browser's validation.
+                // FIX: This converts cents (e.g., 1000) back to dollars (10.00) 
+                // and formats it as a clean two-decimal string for the browser.
                 defaultValue={(invoice.amount / 100).toFixed(2)} 
                 placeholder="Enter USD amount"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
