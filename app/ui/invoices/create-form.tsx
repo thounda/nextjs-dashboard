@@ -8,14 +8,15 @@ import {
 } from '@heroicons/react/24/outline';
 import { Button } from '@/app/ui/button';
 import { createInvoice, State } from '@/app/lib/actions'; // Import the State type
-import { useFormState, useFormStatus } from 'react-dom'; // Import hooks
- 
+import { useFormStatus } from 'react-dom'; // Import hooks
+import { useActionState } from 'react';
+
 // Define the initial state for the form errors
 const initialState: State = { message: null, errors: {} };
  
 export default function Form({ customers }: { customers: CustomerField[] }) {
-  // 1. Use useFormState hook to manage the form state and get the dispatch function
-  const [state, dispatch] = useFormState(createInvoice, initialState);
+  // 1. Use useActionState hook to manage the form state and get the dispatch function
+  const [state, dispatch] = useActionState(createInvoice, initialState);
  
   return (
     // 2. Use the dispatch function as the form action

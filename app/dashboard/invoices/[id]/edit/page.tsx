@@ -1,7 +1,13 @@
+import { Metadata } from 'next';
 import Form from '@/app/ui/invoices/edit-form';
 import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
 // Import only what is necessary. We no longer need 'notFound' here.
 import { fetchInvoiceById, fetchCustomers } from '@/app/lib/data';
+
+// Meta page specific metadata
+export const metadata: Metadata = {
+  title: 'Edit Customer | Acme Dashboard',
+};
 
 // Use 'any' to bypass the build environment's non-standard type check
 export default async function Page({ params }: any) {

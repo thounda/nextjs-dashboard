@@ -1,3 +1,4 @@
+import { Metadata } from 'next';
 import Pagination from '@/app/ui/invoices/pagination';
 import Search from '@/app/ui/search';
 import Table from '@/app/ui/invoices/table';
@@ -6,6 +7,11 @@ import { lusitana } from '@/app/ui/fonts';
 import { Suspense } from 'react';
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { fetchInvoicesPages } from '@/app/lib/data';
+
+// Meta page specific metadata
+export const metadata: Metadata = {
+  title: 'Invoices',
+};
 
 // We use the 'any' type here to bypass the strict and non-standard 'PageProps'
 // constraint that is causing the Vercel build to fail.
