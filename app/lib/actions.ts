@@ -1,5 +1,7 @@
 "use server";
 
+import { signIn } from '@/auth';
+import { AuthError } from 'next-auth';
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -130,5 +132,25 @@ export async function deleteInvoice(id: string) {
     console.error(error);
     // Throwing an error satisfies the expected action prop type (Promise<void>).
     throw new Error('Database Error: Failed to Delete Invoice.');
+  }
+}
+
+// Connect the auth logic with login form
+export async function authenticate(
+  prevState: string | undefined,
+  formData: FormData,
+) {
+  try {
+    await signIn('credentials', formData);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case 'CredentialsSignin':
+          return 'Invalid credentials.';
+        default:
+          return 'Something went wrong.';
+      }
+    }
+    throw error;
   }
 }
