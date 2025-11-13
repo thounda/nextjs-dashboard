@@ -8,7 +8,8 @@ import {
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
 import { updateInvoice, State } from '@/app/lib/actions'; 
-import { useFormState, useFormStatus } from 'react-dom'; 
+import { useFormStatus } from 'react-dom'; 
+import { useActionState } from 'react';
 
 export default function EditInvoiceForm({
   invoice,
@@ -23,8 +24,8 @@ export default function EditInvoiceForm({
   // 2. Define the initial state for the form errors
   const initialState: State = { message: null, errors: {} };
   
-  // 3. Use useFormState hook to manage the form state and get the dispatch function
-  const [state, dispatch] = useFormState(updateInvoiceWithId, initialState);
+  // 3. Use useActionState hook to manage the form state and get the dispatch function
+  const [state, dispatch] = useActionState(updateInvoiceWithId, initialState);
 
   return (
     // 4. Use the dispatch function as the form action
