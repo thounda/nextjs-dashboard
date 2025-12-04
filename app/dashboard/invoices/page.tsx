@@ -24,8 +24,12 @@ export default async function Page({
   // throw new Error('Forced Error to Test error.tsx');
   // =========================================
 
+  // ➡️ CRITICAL FIX: Await searchParams before accessing properties.
+  // This resolves the "searchParams is a Promise" error.
+  const awaitedSearchParams = await searchParams;
+
   // We cast the searchParams object here to restore type safety within the function
-  const params = searchParams as
+  const params = awaitedSearchParams as
     | {
         query?: string;
         page?: string;

@@ -11,8 +11,12 @@ export const metadata: Metadata = {
 
 // Use 'any' to bypass the build environment's non-standard type check
 export default async function Page({ params }: any) {
+
+  // ➡️ CRITICAL FIX: Await params before accessing properties.
+  const awaitedParams = await params; // <--- ADD THIS LINE
+
   // We explicitly cast the params here to maintain type safety within the component
-  const { id } = params as { id: string };
+  const { id } = awaitedParams as { id: string };
   
   // Fetch data concurrently. 
   // If fetchInvoiceById finds no invoice, it calls notFound() and terminates execution.
