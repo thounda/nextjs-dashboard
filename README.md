@@ -32,7 +32,3 @@ By exploring this codebase, developers can gain practical, hands-on experience w
 
 For a complete explanation of the App Router's features, check out the [Next.js App Router Course Full Walkthrough (ACME Dashboard)](https://www.youtube.com/watch?v=PiDLixGol-A).
 
-### User Credentials to login
-
-* **User:** <user@nextmail.com>
-* **Pw:**   123456
